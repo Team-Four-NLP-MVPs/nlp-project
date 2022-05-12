@@ -33,11 +33,12 @@ if headers["Authorization"] == "token " or headers["User-Agent"] == "":
         "You need to follow the instructions marked TODO in this script before trying to use it"
     )
 
-
+# change below, giving me an indication of any URL throwing errors
 def github_api_request(url: str) -> Union[List, Dict]:
     response = requests.get(url, headers=headers)
     response_data = response.json()
     if response.status_code != 200:
+        print(f'ERROR MAKING REQUEST TO URL: {url}')
         raise Exception(
             f"Error response from github api! status code: {response.status_code}, "
             f"response: {json.dumps(response_data)}"
