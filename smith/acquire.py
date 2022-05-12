@@ -7,7 +7,10 @@ import re
 
 def get_endpoints():
     '''This function scrapes repository collections on github.com and returns a list 
-    of url endpoints for those repositories.'''
+    of url endpoints for those repositories.
+    
+    To use these endpoints, append each string value to 'https://github.com' to
+    create a list of urls '''
     # create an empty list to store endpoints
     endpoints = []
     # go to each url - trending repos daily, weekly, and monthly
