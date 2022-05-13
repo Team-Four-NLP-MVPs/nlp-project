@@ -137,7 +137,7 @@ def split_data(df, target):
     train_validate, test = train_test_split(df, test_size=.2, 
                                         random_state=random_state, stratify=df[target])
     train, validate = train_test_split(train_validate, test_size=.3, 
-                                   random_state=random_state, stratify=df[target])
+                                       random_state=random_state, stratify=df[target])
 
     # print the size of each resulting sample
     print(f'train\t n = {train.shape[0]}')
