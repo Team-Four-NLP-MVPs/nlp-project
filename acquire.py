@@ -42,11 +42,8 @@ def get_repos():
     # check to see if a local copy already exists. 
     if os.path.exists(filename):
         print('Reading from local CSV...')
-        # if so, return the local csv as a list
-        repos = pd.read_csv(filename)['0']
-        repos = repos.str[1:]
-        return repos.to_list()
-        
+        # if so, return the local csv
+        return pd.read_csv(filename)
 
     #otherwise: scrape the data: 
 
@@ -94,7 +91,7 @@ def github_api_request(url: str) -> Union[List, Dict]:
     response = requests.get(url, headers=headers)
     response_data = response.json()
     if response.status_code != 200:
-        print('error from url: ', url)
+        print('error reponse from ', url)
         raise Exception(
             f"Error response from github api! status code: {response.status_code}, "
             f"response: {json.dumps(response_data)}"
