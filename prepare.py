@@ -48,6 +48,8 @@ def basic_clean(text):
         .decode('utf-8', 'ignore')
     # replace / with space to account for urls in readme
     text = text.replace('/', ' ')
+    text = text.replace(']', ' ')
+    text = text.replace('[', ' ')
     # Return: string obtained by replacing leftmost non-overlapping patterns by the replacement.
     text = re.sub(r"[^a-z0-9\s]", '', text)
     return text
@@ -128,6 +130,7 @@ def prep_repos(df):
     df = df.rename(columns={'readme_contents':'original'})
     # performs stemming, lemmatization, and cleaning from previous UDF.
     df = nlp_prep(df)
+    df['language_reduced'] = df.language.apply(lambda lang: lang if lang in ['JavaScript', 'HTML', 'Python'] else 'Other')
     return df
 #|---------------------------------------------------------------------------------------------|#
 def split_data(df, target):
@@ -136,10 +139,12 @@ def split_data(df, target):
     validate dataframes for while stratifying along the target.
     '''
 
-    train_validate, test = train_test_split(df, test_size=.2, random_state=random_state, 
+    train_validate, test = train_test_split(df, test_size=.2, 
+                                            random_state=random_state, 
                                             stratify=df[target])
     train, validate = train_test_split(train_validate, test_size=.3, 
-                                       random_state=random_state, stratify=df[target])
+                                       random_state=random_state, 
+                                       stratify=train_validate[target])
 
     # print the size of each resulting sample
     print(f'train\t n = {train.shape[0]}')
