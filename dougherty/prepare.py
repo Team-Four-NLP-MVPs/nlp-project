@@ -208,27 +208,27 @@ def prep_readme_data(df, column, extra_words=[], exclude_words=[]):
     # create a column called 'clean' with the previously established UDFs.
     df['clean'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
-                            .apply(remove_stopwords2, 
+                            .apply(remove_stopwords, 
                                    extra_words=extra_words, 
                                    exclude_words=exclude_words)
     # create a column called 'stemmed' with the previously established UDFs.
     df['stemmed'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
                             .apply(stem)\
-                            .apply(remove_stopwords2, 
+                            .apply(remove_stopwords, 
                                    extra_words=extra_words, 
                                    exclude_words=exclude_words)
     # create a column called 'lemmatize' with the previously established UDFs.
     df['lemmatized'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
                             .apply(lemmatize)\
-                            .apply(remove_stopwords2, 
+                            .apply(remove_stopwords, 
                                    extra_words=extra_words, 
                                    exclude_words=exclude_words)
     
     return df[['title', column,'clean', 'stemmed', 'lemmatized']]
 #|---------------------------------------------------------------------------------------------|#
-def prepare_data2(df, column, additional_stopwords=[]):
+def prepare_data2(df, column):
     '''
     This function take in a df and the name (in string) for the text column 
     with and option to pass lists for additional stopwords
@@ -237,8 +237,7 @@ def prepare_data2(df, column, additional_stopwords=[]):
     '''
     df['clean'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
-                            .apply(remove_stopwords2, 
-                                   additional_stopwords=additional_stopwords)
+                            .apply(remove_stopwords)
     
     df['stemmed'] = df['clean'].apply(stem)
     
