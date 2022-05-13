@@ -208,21 +208,21 @@ def prep_readme_data(df, column, extra_words=[], exclude_words=[]):
     # create a column called 'clean' with the previously established UDFs.
     df['clean'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
-                            .apply(remove_stopwords, 
+                            .apply(remove_stopwords2, 
                                    extra_words=extra_words, 
                                    exclude_words=exclude_words)
     # create a column called 'stemmed' with the previously established UDFs.
     df['stemmed'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
                             .apply(stem)\
-                            .apply(remove_stopwords, 
+                            .apply(remove_stopwords2, 
                                    extra_words=extra_words, 
                                    exclude_words=exclude_words)
     # create a column called 'lemmatize' with the previously established UDFs.
     df['lemmatized'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
                             .apply(lemmatize)\
-                            .apply(remove_stopwords, 
+                            .apply(remove_stopwords2, 
                                    extra_words=extra_words, 
                                    exclude_words=exclude_words)
     
@@ -237,7 +237,7 @@ def prepare_data2(df, column, additional_stopwords=[]):
     '''
     df['clean'] = df[column].apply(basic_clean)\
                             .apply(tokenize)\
-                            .apply(remove_stopwords, 
+                            .apply(remove_stopwords2, 
                                    additional_stopwords=additional_stopwords)
     
     df['stemmed'] = df['clean'].apply(stem)
