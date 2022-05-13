@@ -60,7 +60,7 @@ def get_repos():
         repos = repos.str[1:]
         return repos.to_list()
 
-    #otherwise: scrape the data: 
+    otherwise: scrape the data: 
 
     # create an empty list to store endpoints
     endpoints = []
@@ -89,6 +89,7 @@ def get_repos():
                                 .select_one('h1')
                                 .select_one('a')
                                 .attrs['href'])
+    endpoints = list(pd.Series(endpoints).str[1:])
     # return the list of endpoints
     return endpoints
 
