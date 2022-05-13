@@ -47,7 +47,7 @@ def basic_clean(text):
         .encode('ascii', 'ignore')\
         .decode('utf-8', 'ignore')
     # Return: string obtained by replacing leftmost non-overlapping patterns by the replacement.
-    text = re.sub(r"[^a-z0-9'\s]", '', text)
+    text = re.sub(r"[^a-z0-9\s]", '', text)
     return text
 #|---------------------------------------------------------------------------------------------|#
 def tokenize(text):
