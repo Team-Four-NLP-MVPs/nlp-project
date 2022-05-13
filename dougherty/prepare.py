@@ -128,74 +128,26 @@ def prep_repos(df):
     df = nlp_prep(df)
     return df
 #|---------------------------------------------------------------------------------------------|#
-def train_validate_test_split(x, y, test_size=.2, validate_size=.3, random_state=random_state):
+def split_data(df, target):
     '''
-    This function takes in x and y, then splits each of them into three separate samples: 
-    train, test, and validate, for use in machine learning modeling.
+    This function takes in a dataframe and splits it into train, test, and 
+    validate dataframes for while stratifying along the target.
+    '''
 
-    The samples are returned in the following order: 
-         x_train, y_train, x_validate, y_validate, x_test, y_test
-    
-    The function also prints the size of each sample.
-    '''
-    # split x into train and test
-    x_train, x_test = train_test_split(x, test_size=test_size, random_state=random_state)
-    # further split the x_train into train and validate
-    x_train, x_validate = train_test_split(x_train, test_size=validate_size,
-                                           random_state=random_state)
-    # split y into train and test
-    y_train, y_test = train_test_split(y, test_size=test_size,
-                                       random_state=random_state)
-    # further split the y_train into train and validate
-    y_train, y_validate = train_test_split(y_train, test_size=validate_size,
-                                           random_state=random_state)
+    train_validate, test = train_test_split(df, test_size=.2, 
+                                        random_state=random_state, stratify=df[target])
+    train, validate = train_test_split(train_validate, test_size=.3, 
+                                   random_state=random_state, stratify=df[target])
 
     # print the size of each resulting sample
-    print(f'train\t n = {x_train.shape[0]}')
-    print(f'train\t n = {y_train.shape[0]}')
-    print(f'validate n = {x_validate.shape[0]}')
-    print(f'train\t n = {y_validate.shape[0]}')
-    print(f'test\t n = {x_test.shape[0]}')
-    print(f'train\t n = {y_test.shape[0]}')
+    print(f'train\t n = {train.shape[0]}')
+    print(f'validate n = {validate.shape[0]}')
+    print(f'test\t n = {test.shape[0]}')
     
-
-    return x_train, y_train, x_validate, y_validate, x_test, y_test
+    return train, validate, test
 #|---------------------------------------------------------------------------------------------|#
-
-def train_validate_test_split2(x, y, target, test_size=.2, validate_size=.3, random_state=random_state):
-    '''
-    This function takes in x and y, then splits each of them into three separate samples: 
-    train, test, and validate, for use in machine learning modeling. This includes target
-    for stratification as an argument.
-
-    The samples are returned in the following order: 
-         x_train, y_train, x_validate, y_validate, x_test, y_test
-    
-    The function also prints the size of each sample.
-    '''
-    # split x into train and test
-    x_train, x_test = train_test_split(x, test_size=test_size, random_state=random_state,
-                                      stratify=df[target])
-    # further split the x_train into train and validate
-    x_train, x_validate = train_test_split(x_train, test_size=validate_size,
-                                           random_state=random_state, stratify=df[target])
-    # split y into train and test
-    y_train, y_test = train_test_split(y, test_size=test_size,
-                                       random_state=random_state)
-    # further split the y_train into train and validate
-    y_train, y_validate = train_test_split(y_train, test_size=validate_size,
-                                           random_state=random_state)
-
-    # print the size of each resulting sample
-    print(f'train\t n = {x_train.shape[0]}')
-    print(f'train\t n = {y_train.shape[0]}')
-    print(f'validate n = {x_validate.shape[0]}')
-    print(f'train\t n = {y_validate.shape[0]}')
-    print(f'test\t n = {x_test.shape[0]}')
-    print(f'train\t n = {y_test.shape[0]}')
-    
-
-    return x_train, y_train, x_validate, y_validate, x_test, y_test
+#|---------------------------------------------------------------------------------------------|#
+#|---------------------------------------------------------------------------------------------|#
 #|---------------------------------------------------------------------------------------------|#
 #|---------------------------------------------------------------------------------------------|#
 #|---------------------------------------------------------------------------------------------|#
