@@ -47,7 +47,7 @@ def basic_clean(text):
         .encode('ascii', 'ignore')\
         .decode('utf-8', 'ignore')
     # Return: string obtained by replacing leftmost non-overlapping patterns by the replacement.
-    text = re.sub(r"[^a-z0-9'\s]", '', text)
+    text = re.sub(r"[^a-z0-9\s]", '', text)
     return text
 #|---------------------------------------------------------------------------------------------|#
 def tokenize(text):
@@ -134,10 +134,47 @@ def split_data(df, target):
     validate dataframes for while stratifying along the target.
     '''
 
+<<<<<<< HEAD
     train_validate, test = train_test_split(df, test_size=.2, 
                                         random_state=random_state, stratify=df[target])
     train, validate = train_test_split(train_validate, test_size=.3, 
                                    random_state=random_state, stratify=df[target])
+=======
+    # print the size of each resulting sample
+    print(f'train\t n = {x_train.shape[0]}')
+    print(f'train\t n = {y_train.shape[0]}')
+    print(f'validate n = {x_validate.shape[0]}')
+    print(f'train\t n = {y_validate.shape[0]}')
+    print(f'test\t n = {x_test.shape[0]}')
+    print(f'train\t n = {y_test.shape[0]}')
+    
+
+    return x_train, y_train, x_validate, y_validate, x_test, y_test
+#|---------------------------------------------------------------------------------------------|#
+def train_validate_test_split2(x, y, target, test_size=.2, validate_size=.3, random_state=random_state):
+    '''
+    This function takes in x and y, then splits each of them into three separate samples: 
+    train, test, and validate, for use in machine learning modeling. This includes target
+    for stratification as an argument.
+
+    The samples are returned in the following order: 
+         x_train, y_train, x_validate, y_validate, x_test, y_test
+    
+    The function also prints the size of each sample.
+    '''
+    # split x into train and test
+    x_train, x_test = train_test_split(x, test_size=test_size, random_state=random_state,
+                                      stratify=y)
+    # further split the x_train into train and validate
+    x_train, x_validate = train_test_split(x_train, test_size=validate_size,
+                                           random_state=random_state, stratify=y)
+    # split y into train and test
+    y_train, y_test = train_test_split(y, test_size=test_size,
+                                       random_state=random_state)
+    # further split the y_train into train and validate
+    y_train, y_validate = train_test_split(y_train, test_size=validate_size,
+                                           random_state=random_state)
+>>>>>>> 8105b21bf0d0614f7a4ba2aadcdf3984b82be430
 
     # print the size of each resulting sample
     print(f'train\t n = {train.shape[0]}')

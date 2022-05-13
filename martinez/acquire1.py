@@ -24,11 +24,6 @@ from env import github_token, github_username
 # TODO: Add your github username to your env.py file under the variable `github_username`
 # TODO: Add more repositories to the `REPOS` list below.
 
-REPOS = [
-    "gocodeup/codeup-setup-script",
-    "gocodeup/movies-application",
-    "torvalds/linux",
-]
 
 headers = {"Authorization": f"token {github_token}", "User-Agent": github_username}
 
@@ -37,6 +32,54 @@ if headers["Authorization"] == "token " or headers["User-Agent"] == "":
         "You need to follow the instructions marked TODO in this script before trying to use it"
     )
 
+def get_repos():
+    '''This function scrapes repository collections on github.com and returns a list 
+    of url endpoints for those repositories.
+    
+    To use these endpoints, append each string value to 'https://github.com' to
+    create a list of urls '''
+
+    # establish a filename for the local csv
+    filename = 'repos.csv'
+    # check to see if a local copy already exists. 
+    if os.path.exists(filename):
+        print('Reading from local CSV...')
+        # if so, return the local csv
+        return pd.read_csv(filename)
+
+    #otherwise: scrape the data: 
+
+    # create an empty list to store endpoints
+    endpoints = []
+    # go to each url - trending repos daily, weekly, and monthly
+    for url in ['https://github.com/trending?since=daily&spoken_language_code=en',
+                'https://github.com/trending?since=weekly&spoken_language_code=en',
+                'https://github.com/trending?since=monthly&spoken_language_code=en']:
+        # get the response
+        response = get(url)
+        # create the beautiful soup object
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # identify html objects containing each repository
+        for repo in soup.select('.Box-row'):
+            # pull out the url endpoint for that repo and append to the list
+            endpoints.append(repo
+                             .select_one('h1')
+                             .select_one('a')
+                             .attrs['href'])
+    # head to a new set of repo collections and repeat the process
+    for url in ['https://github.com/collections/learn-to-code',
+                'https://github.com/collections/open-source-organizations']:
+        response = get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        for repo in soup.select('article'):
+            endpoints.append(repo
+                                .select_one('h1')
+                                .select_one('a')
+                                .attrs['href'])
+    # return the list of endpoints
+    return endpoints
+
+REPOS = get_repos()
 
 def github_api_request(url: str) -> Union[List, Dict]:
     response = requests.get(url, headers=headers)
