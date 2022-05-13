@@ -93,6 +93,22 @@ def get_repos():
     return endpoints
 
 REPOS = get_repos()
+REPOS.append(['liu513632815/WebCustomerService',
+              'awslabs/aws-customer-churn-pipeline',
+              'chawucirencc/Predicting-whether-a-telecommunications-company-is-losing-customers',
+              'ameerbadri/amazon-alexa-twilio-customer-service',
+              'bplank/ijcnlp2017-customer-feedback',
+              'likeastore/ngCustomerVoice',
+              'KolatimiDave/Expresso-Customer-Churn-Prediction',
+              'codingmonk21/CustomerSupportDesk',
+              'sol-eng/customer-tracker',
+              'mageplaza/magento-2-customer-approval',
+              'iris9112/Customer-Segmentation',
+              'quafzi/magento-CustomerGridOrderCount',
+              'AatiqUrRehman/customer-support-flutter-ui',
+              'vercel/customer-support-examples',
+              'customerio/go-customerio',
+              'nexmo-community/nexmo-customer-service-chat-demo'])
 # Headers which grant authorization for scraping the APIs
 headers = {"Authorization": f"token {github_token}", "User-Agent": github_username}
 # Failsafe indicating the necessary pre-requisities have not been performed
