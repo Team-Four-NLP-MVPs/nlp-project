@@ -43,12 +43,13 @@ import re                                                                       
 #|---------------------------------------------------------------------------------------------|#
 #                                    USER-DEFINED FUNCTIONS                                     #
 def get_repos():
-    '''This function scrapes repository collections on github.com and returns a list 
+    '''
+    This function scrapes repository collections on github.com and returns a list 
     of url endpoints for those repositories.
     
     To use these endpoints, append each string value to 'https://github.com' to
-    create a list of urls '''
-
+    create a list of urls.
+    '''
     # establish a filename for the local csv
     filename = 'repos.csv'
     # check to see if a local copy already exists. 
@@ -58,7 +59,6 @@ def get_repos():
         repos = pd.read_csv(filename)['0']
         repos = repos.str[1:]
         return repos.to_list()
-        
 
     #otherwise: scrape the data: 
 
@@ -70,7 +70,7 @@ def get_repos():
                 'https://github.com/trending?since=monthly&spoken_language_code=en']:
         # get the response
         response = get(url)
-        # create the beautiful soup object
+        # create the beautiful soup object; It creates a parse tree from page source code
         soup = BeautifulSoup(response.text, 'html.parser')
         # identify html objects containing each repository
         for repo in soup.select('.Box-row'):
@@ -93,9 +93,9 @@ def get_repos():
     return endpoints
 
 REPOS = get_repos()
-
+# Headers which grant authorization for scraping the APIs
 headers = {"Authorization": f"token {github_token}", "User-Agent": github_username}
-
+# Failsafe indicating the necessary pre-requisities have not been performed
 if headers["Authorization"] == "token " or headers["User-Agent"] == "":
     raise Exception(
         "You need to follow the instructions marked TODO in this script before trying to use it"
@@ -103,8 +103,16 @@ if headers["Authorization"] == "token " or headers["User-Agent"] == "":
 #|---------------------------------------------------------------------------------------------|#
 
 def github_api_request(url: str) -> Union[List, Dict]:
+    """
+    Using the requests library, this UDF pings the provided URL
+    obtains the response and determines if it is valid, and 
+    assuming that check is successful, returns the data.
+    """
+    # ping Github for information.
     response = requests.get(url, headers=headers)
+    # obtain the response
     response_data = response.json()
+    # check the current status code; if not 200 (received and understood) indicate an error
     if response.status_code != 200:
         print('error from url: ', url)
         raise Exception(
@@ -115,10 +123,21 @@ def github_api_request(url: str) -> Union[List, Dict]:
 #|---------------------------------------------------------------------------------------------|#
 
 def get_repo_language(repo: str) -> str:
+    '''
+    Using a string with the named repository, this UDF inspects the elements
+    of the API request and returns the programming language(s) contained therein.
+    In the event of not detecting a dictionary containing a language key,
+    the resultant error is indicated.
+    '''
+    # provides the api link with the exception of the repo name (provided in argument)
     url = f"https://api.github.com/repos/{repo}"
+    # utilizes UDF above this one to garner the pinged API request
     repo_info = github_api_request(url)
+    # Conditional check to validate whether the extant type is a dictionary
     if type(repo_info) is dict:
+        # casts the information of the repository
         repo_info = cast(Dict, repo_info)
+        # in the event the language key is not in the repository, an exception is raised
         if "language" not in repo_info:
             raise Exception(
                 "'language' key not round in response\n{}".format(json.dumps(repo_info))
@@ -130,11 +149,20 @@ def get_repo_language(repo: str) -> str:
 #|---------------------------------------------------------------------------------------------|#
 
 def get_repo_contents(repo: str) -> List[Dict[str, str]]:
+    """
+    Using a user-provided repository title, generates the full URL to grab repo contents.
+    Subsequently checks if the contents are in a list format, and if so, returns them.
+    In the case where contents are not a list reponse, raises an exception. 
+    """
+    # provides the api link with the exception of the repo name (provided in argument)
     url = f"https://api.github.com/repos/{repo}/contents/"
+    # uses the UDF from before to obtain the contents
     contents = github_api_request(url)
+    # determines if the contents are in a list format and returns them if satisfied.
     if type(contents) is list:
         contents = cast(List, contents)
         return contents
+    # otherwise raises an exception
     raise Exception(
         f"Expecting a list response from {url}, instead got {json.dumps(contents)}"
     )
@@ -142,9 +170,13 @@ def get_repo_contents(repo: str) -> List[Dict[str, str]]:
 
 def get_readme_download_url(files: List[Dict[str, str]]) -> str:
     """
-    Takes in a response from the github api that lists the files in a repo and
-    returns the url that can be used to download the repo's README file.
+    Takes in a response from the Github API which lists a repo's files and
+    returns the URL used to download the repo's README file. This UDF accounts
+    for instances of capitalization variants (as README is common), by converting to all
+    lowercase during its interpretation. Returns the downloadable url if the condition
+    of readme's presence is met. 
     """
+    # for loop which tests whether the list contains readmes, and the download url 
     for file in files:
         if file["name"].lower().startswith("readme"):
             return file["download_url"]
@@ -153,15 +185,18 @@ def get_readme_download_url(files: List[Dict[str, str]]) -> str:
 
 def process_repo(repo: str) -> Dict[str, str]:
     """
-    Takes a repo name like "gocodeup/codeup-setup-script" and returns a
-    dictionary with the language of the repo and the readme contents.
+    Receives a repository name such as "gocodeup/codeup-setup-script" and returns a
+    dictionary with the language of the repo and the README contents.
     """
+    # uses previous UDF to acquire the repo contents
     contents = get_repo_contents(repo)
+    # obtains the download url for the freshly generated contents
     readme_download_url = get_readme_download_url(contents)
     if readme_download_url == "":
         readme_contents = ""
     else:
         readme_contents = requests.get(readme_download_url).text
+    # returns a dictionary with keys: repo, language, readme_contents
     return {
         "repo": repo,
         "language": get_repo_language(repo),
@@ -171,8 +206,10 @@ def process_repo(repo: str) -> Dict[str, str]:
 
 def scrape_github_data() -> List[Dict[str, str]]:
     """
-    Loop through all of the repos and process them. Returns the processed data.
+    Loop through all of the repos and process them.
+    Returns the processed data.
     """
+    # REPOS was established in the initial UDF.
     return [process_repo(repo) for repo in REPOS]
 
 
