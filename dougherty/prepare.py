@@ -161,6 +161,7 @@ def train_validate_test_split(x, y, test_size=.2, validate_size=.3, random_state
 
     return x_train, y_train, x_validate, y_validate, x_test, y_test
 #|---------------------------------------------------------------------------------------------|#
+
 def train_validate_test_split2(x, y, target, test_size=.2, validate_size=.3, random_state=random_state):
     '''
     This function takes in x and y, then splits each of them into three separate samples: 
