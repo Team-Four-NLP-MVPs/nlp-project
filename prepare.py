@@ -47,7 +47,7 @@ def basic_clean(text):
         .encode('ascii', 'ignore')\
         .decode('utf-8', 'ignore')
     # Return: string obtained by replacing leftmost non-overlapping patterns by the replacement.
-    text = re.sub(r"[^a-z0-9'\s]", '', text)
+    text = re.sub(r"[^a-z0-9\s]", '', text)
     return text
 #|---------------------------------------------------------------------------------------------|#
 def tokenize(text):
@@ -174,10 +174,10 @@ def train_validate_test_split2(x, y, target, test_size=.2, validate_size=.3, ran
     '''
     # split x into train and test
     x_train, x_test = train_test_split(x, test_size=test_size, random_state=random_state,
-                                      stratify=df[target])
+                                      stratify=y)
     # further split the x_train into train and validate
     x_train, x_validate = train_test_split(x_train, test_size=validate_size,
-                                           random_state=random_state, stratify=df[target])
+                                           random_state=random_state, stratify=y)
     # split y into train and test
     y_train, y_test = train_test_split(y, test_size=test_size,
                                        random_state=random_state)
