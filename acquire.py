@@ -1,35 +1,47 @@
-"""
-A module for obtaining repo readme and language data from the github API.
-
-Before using this module, read through it, and follow the instructions marked
-TODO.
-
-After doing so, run it like this:
-
-    python acquire.py
-
-To create the `data.json` file that contains the data.
-"""
-import os
-import json
-from typing import Dict, List, Optional, Union, cast
-import requests
-from requests import get
-from bs4 import BeautifulSoup
-import os
-import pandas as pd
-import numpy as np
-import re
-
-from env import github_token, github_username
-
-# TODO: Make a github personal access token.
-#     1. Go here and generate a personal access token: https://github.com/settings/tokens
-#        You do _not_ need select any scopes, i.e. leave all the checkboxes unchecked
-#     2. Save it in your env.py file under the variable `github_token`
-# TODO: Add your github username to your env.py file under the variable `github_username`
-# TODO: Add more repositories to the `REPOS` list below.
-
+#|---------------------------------------------------------------------------------------------|#
+#   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄   #
+#  ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌  #
+#  ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀   #
+#  ▐░▌       ▐░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░▌       ▐░▌▐░▌            #
+#  ▐░█▄▄▄▄▄▄▄█░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄▄▄   #
+#  ▐░░░░░░░░░░░▌▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌  #
+#  ▐░█▀▀▀▀▀▀▀█░▌▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌     ▐░▌     ▐░█▀▀▀▀█░█▀▀ ▐░█▀▀▀▀▀▀▀▀▀   #
+#  ▐░▌       ▐░▌▐░▌          ▐░░░░░░░░░░░▌▐░▌       ▐░▌     ▐░▌     ▐░▌     ▐░▌  ▐░▌            #
+#  ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄▄▄  ▀▀▀▀▀▀█░█▀▀ ▐░█▄▄▄▄▄▄▄█░▌ ▄▄▄▄█░█▄▄▄▄ ▐░▌      ▐░▌ ▐░█▄▄▄▄▄▄▄▄▄   #
+#  ▐░▌       ▐░▌▐░░░░░░░░░░░▌        ▐░▌  ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌  #
+#   ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀          ▀    ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀   #
+#|---------------------------------------------------------------------------------------------|#
+#|---------------------------------------------------------------------------------------------|#
+# A module for obtaining READMEs from repositories as well as language data from the github API.#
+# Before using this module, please do the following:                                            #
+# FIRST, make a GitHub personal access token here - https://github.com/settings/tokens          #
+#       Do not select any scopes in this process; leave all boxes unticked.                     #
+#       Save the token credentials in your env.py file under the variable `github_token`        #
+# SECOND, add your github username to your env.py file under the variable `github_username`     #
+# THIRD, Add more repositories to the `REPOS` list below.                                       #
+#                                                                                               #
+# AFTER THESE THREE STEPS ARE COMPLETE --> Use the terminal to run: python acquire.py           #
+# This will result in the creation of a 'data.json' file containing the results of the scrape.  #
+#|---------------------------------------------------------------------------------------------|#
+#|---------------------------------------------------------------------------------------------|#
+#                                           IMPORTS                                             #
+# User-dependent imports                                                                        #
+from env import github_token, github_username                                                   #
+import os                                                                                       #
+# Standard-fare                                                                                 #
+import pandas as pd                                                                             #
+import numpy as np                                                                              #
+# NLP Necessities                                                                               #
+from typing import Dict, List, Optional, Union, cast                                            #
+import requests                                                                                 #
+from requests import get                                                                        #
+from bs4 import BeautifulSoup                                                                   #
+# Others                                                                                        #
+import json                                                                                     # 
+import re                                                                                       #
+#|---------------------------------------------------------------------------------------------|#
+#|---------------------------------------------------------------------------------------------|#
+#                                    USER-DEFINED FUNCTIONS                                     #
 def get_repos():
     '''This function scrapes repository collections on github.com and returns a list 
     of url endpoints for those repositories.
@@ -88,7 +100,7 @@ if headers["Authorization"] == "token " or headers["User-Agent"] == "":
     raise Exception(
         "You need to follow the instructions marked TODO in this script before trying to use it"
     )
-
+#|---------------------------------------------------------------------------------------------|#
 
 def github_api_request(url: str) -> Union[List, Dict]:
     response = requests.get(url, headers=headers)
@@ -100,7 +112,7 @@ def github_api_request(url: str) -> Union[List, Dict]:
             f"response: {json.dumps(response_data)}"
         )
     return response_data
-
+#|---------------------------------------------------------------------------------------------|#
 
 def get_repo_language(repo: str) -> str:
     url = f"https://api.github.com/repos/{repo}"
@@ -115,7 +127,7 @@ def get_repo_language(repo: str) -> str:
     raise Exception(
         f"Expecting a dictionary response from {url}, instead got {json.dumps(repo_info)}"
     )
-
+#|---------------------------------------------------------------------------------------------|#
 
 def get_repo_contents(repo: str) -> List[Dict[str, str]]:
     url = f"https://api.github.com/repos/{repo}/contents/"
@@ -126,7 +138,7 @@ def get_repo_contents(repo: str) -> List[Dict[str, str]]:
     raise Exception(
         f"Expecting a list response from {url}, instead got {json.dumps(contents)}"
     )
-
+#|---------------------------------------------------------------------------------------------|#
 
 def get_readme_download_url(files: List[Dict[str, str]]) -> str:
     """
@@ -137,7 +149,7 @@ def get_readme_download_url(files: List[Dict[str, str]]) -> str:
         if file["name"].lower().startswith("readme"):
             return file["download_url"]
     return ""
-
+#|---------------------------------------------------------------------------------------------|#
 
 def process_repo(repo: str) -> Dict[str, str]:
     """
@@ -155,7 +167,7 @@ def process_repo(repo: str) -> Dict[str, str]:
         "language": get_repo_language(repo),
         "readme_contents": readme_contents,
     }
-
+#|---------------------------------------------------------------------------------------------|#
 
 def scrape_github_data() -> List[Dict[str, str]]:
     """
@@ -167,3 +179,6 @@ def scrape_github_data() -> List[Dict[str, str]]:
 if __name__ == "__main__":
     data = scrape_github_data()
     json.dump(data, open("data.json", "w"), indent=1)
+#|---------------------------------------------------------------------------------------------|#
+#|---------------------------------------------------------------------------------------------|#
+#|---------------------------------------------------------------------------------------------|#
