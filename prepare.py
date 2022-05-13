@@ -46,6 +46,8 @@ def basic_clean(text):
     text = unicodedata.normalize('NFKD', text)\
         .encode('ascii', 'ignore')\
         .decode('utf-8', 'ignore')
+    # replace / with space to account for urls in readme
+    text = text.replace('/', ' ')
     # Return: string obtained by replacing leftmost non-overlapping patterns by the replacement.
     text = re.sub(r"[^a-z0-9\s]", '', text)
     return text
