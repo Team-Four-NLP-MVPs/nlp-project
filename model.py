@@ -415,7 +415,7 @@ def get_best(model_results):
 
 def test_model_68(train, test, target):
     '''
-    recreates model #6 and return the accuracy score
+    recreates model #68 and return the accuracy score
     for its performance on the test sample
     '''   
     # split into x and y
@@ -437,3 +437,26 @@ def test_model_68(train, test, target):
     # return accuracy score
     return clf.score(cv.transform(x_test), y_test)
 
+def test_model_2(train, test, target):
+    '''
+    recreates model #2 and returns the accuracy score
+    for its performance on the test sample
+    '''   
+    # split into x and y
+    x_train = train.lemmatized
+    y_train = train[target]
+    x_test = test.lemmatized
+    y_test = test[target]
+    
+    # create the model
+    clf = DecisionTreeClassifier(max_depth=3, random_state=random_state)
+
+    # preprocess features
+    cv = CountVectorizer().fit(x_train)
+    x_cv = cv.transform(x_train)
+
+    # fit the model
+    clf.fit(x_cv, y_train)
+
+    # return accuracy score
+    return clf.score(cv.transform(x_test), y_test)
