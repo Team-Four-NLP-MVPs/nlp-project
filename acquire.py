@@ -60,7 +60,7 @@ def get_repos():
         repos = repos.str[1:]
         return repos.to_list()
 
-    otherwise: scrape the data: 
+    # otherwise: scrape the data: 
 
     # create an empty list to store endpoints
     endpoints = []
