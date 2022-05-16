@@ -131,6 +131,8 @@ def prep_repos(df):
     # performs stemming, lemmatization, and cleaning from previous UDF.
     df = nlp_prep(df)
     df['language_reduced'] = df.language.apply(lambda lang: lang if lang in ['JavaScript', 'HTML', 'Python'] else 'Other')
+    df['original'] = df['original'].apply(lambda text: np.nan if text == '' else text)
+    df = df.dropna()
     return df
 #|---------------------------------------------------------------------------------------------|#
 def split_data(df, target):

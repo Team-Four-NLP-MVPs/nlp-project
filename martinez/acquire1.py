@@ -10,11 +10,13 @@ After doing so, run it like this:
 
 To create the `data.json` file that contains the data.
 """
+import sys
 import os
 import json
+sys.path.append('..')
 from typing import Dict, List, Optional, Union, cast
-import requests
-
+from requests import get
+from bs4 import BeautifulSoup
 from env import github_token, github_username
 
 # TODO: Make a github personal access token.
