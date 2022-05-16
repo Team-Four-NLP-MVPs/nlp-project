@@ -25,6 +25,7 @@ import unicodedata
 import re
 import json
 import nltk
+import numpy as np
 from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords
 import pandas as pd
