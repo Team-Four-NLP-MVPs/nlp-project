@@ -1,25 +1,15 @@
-# unicode, regex, json for text digestion
 import unicodedata
 import re
 import json
 from wordcloud import WordCloud
 
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
-# nltk: natural language toolkit -> tokenization, stopwords (more on this soon)
-import nltk
-from nltk.tokenize.toktok import ToktokTokenizer
-from nltk.corpus import stopwords
 
 from prepare import *
 
-
-# pandas dataframe manipulation, acquire script, time formatting
-import pandas as pd
-from time import strftime
-
-# shh, down in front
 import warnings
 warnings.filterwarnings('ignore')
 
