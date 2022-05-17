@@ -1,12 +1,9 @@
 # Predicting Repository Languages
 
-<<<<<<< HEAD
-![github_wordcloud](https://user-images.githubusercontent.com/69991789/127923505-65a4e277-e414-401a-a6e1-eff346135647.png)
-
 ## **See our completed presentation [here](https://docs.google.com/presentation/d/14wNkG29vNkR9OuMkvB42JR2K0yB6ZrSVS06qJSrgcWY/edit?usp=sharing)**
 
 =======
->>>>>>> 7a7abb364949f2a6b4f8b84d07efc1708f3049a4
+
 ## Project Goals:
 - Identify elements of README contents that might contribute to an ability to predict that a Github repository's primary programming language
 - Create a predictive model that can take in the text of a Github repository's README and determine that repo's primary language
