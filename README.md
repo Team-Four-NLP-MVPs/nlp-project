@@ -2,7 +2,7 @@
 
 ![github_wordcloud](https://user-images.githubusercontent.com/69991789/127923505-65a4e277-e414-401a-a6e1-eff346135647.png)
 
-## **See our completed presentation [here](https://docs.google.com/presentation/d/1RSblufGvC3jnTIidLAmpIXq9pnMHEzX0/edit?usp=sharing&ouid=113732050903451976581&rtpof=true&sd=true)**
+## **See our completed presentation [here](https://docs.google.com/presentation/d/14wNkG29vNkR9OuMkvB42JR2K0yB6ZrSVS06qJSrgcWY/edit?usp=sharing)**
 
 ## Project Goals:
 - Can we successfully predict a repository's coding languge based off the readme contents?
