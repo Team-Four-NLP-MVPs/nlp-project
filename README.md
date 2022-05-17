@@ -1,123 +1,93 @@
 # Predicting Repository Languages
 
+<<<<<<< HEAD
 ![github_wordcloud](https://user-images.githubusercontent.com/69991789/127923505-65a4e277-e414-401a-a6e1-eff346135647.png)
 
 ## **See our completed presentation [here](https://docs.google.com/presentation/d/14wNkG29vNkR9OuMkvB42JR2K0yB6ZrSVS06qJSrgcWY/edit?usp=sharing)**
 
+=======
+>>>>>>> 7a7abb364949f2a6b4f8b84d07efc1708f3049a4
 ## Project Goals:
-- Can we successfully predict a repository's coding languge based off the readme contents?
-- What readme contents contribute to the prediction of a repository's coding language?
+- Identify elements of README contents that might contribute to an ability to predict that a Github repository's primary programming language
+- Create a predictive model that can take in the text of a Github repository's README and determine that repo's primary language
 
+## Project Description
 
-## Project Goals/Description
-The goal of this project is to predict the programming language of each repository by scraping the repository's README file contents. This project was initiated by utilizing web scraping techniques to scrape README files from various GitHub repositories. After acquiring and preparing our data, our team conducted natural language processing exploration methods such as word clouds, bigrams and trigrams. We employed multiclass classification methods to create multiple machine learning models. The end goal was to create an NLP model that accurately predicted the programming language used in a github repository based on the words and word combinations found in the readme files.
+This project aims to determine predictors of a Github repository's primary programming language based on the repo's README contents. In doing so, we can identify differences in documentation style and depth that are common among the various language communities. Such a model, if proven effective, could be useful for a website like Github, since the primary language is often determined algorithmically by the site and published alongside the repo's contents. 
 
 ### Project Outline:
     
 - Acquisiton of data:
-    - Search for repositories on git hub with "customer" as a commonality.
-    - Conduct web scraping of said repositories' readme contents.
+    - Search various "collections" of repositories on github.com, including:
+        - Top trending repositories for:
+            - Today
+            - This Week
+            - This Month
+            - (as of Thursday, May 12th, 2022)
+        - "Learn to Code" collection
+        - "Open Source Organizations" collection
+        - (filtering for repos where the spoken language is English)
+    - Use web scraping techniques to collect the URLs of those repositories
+    - Query the Github API to obtain the contents of the repositories and their READMEs
 - Prepare and clean data:
-    - Remove repositories in languages other than english
-    - Drop nulls
-    - Lowercase all text
-    - Remove stopwords (including customer, customers, 1, 2, and i)
-    - Tokenize the data
-    - Stem and Lemmatize
-    - Narrow data down to repo's top four languages (java, javascript, php and jupyter)
+    - Create a new target column: `language_reduced`, which includes only the top 3 languages by frequency and bins the remaining languages into an "Other" category
+    - Drop rows where no primary language was identified or where the README contents were empty 
+        - This represented a loss of 16 repositories, resulting in a total of 93 data points.
+    - Basic Clean:
+        - convert all text to lowercase
+        - normalize, encode, and decode the text
+        - replace `/` characters with spaces to parse URLs found in text
+        - remove other special characters from the text
+    - Remove stopwords using the NLTK standard english list
+    - Tokenize
+    - Lemmatize
 - Explore data:
-    - Explore word clouds for top 4 languages
-    - How often are words used?
-        - Analyze top 20 words for each language
-    - Utilize bar graphs, bigrams and trigrams for top 4 languages
-    - Analyze bigram and trigram word clouds for top 4 languages
+    - Use basic exploratory data analysis techniques to compare features such as length of README contents and the most frequently ocurring words/combinations of words
 - Modeling:
-    - Created baseline model based off most common language (PHP)
-    - Make multiple competitive models
-    - Use cleaned, stemmed and lemmatized data on models
-    - Pick best performing model to move forward with.
-    - Test the top model on unseen test data set
-    - Conclude results
-    
-### Target variable
-- Language
-
-## Findings:
-## Data Wrangle:
-- Web scraped respository README files that had the word "customer" in them
-- Filtered out the scraped content by removing non-english repos
-- Normalized, tokenized, stemmed and lemmatized the content for NLP
-- Split data into train, validate and test set
-### Explore:
-- PHP is the most commonly used coding language
-- Some words were key identifiers to their language, such as "magento" for PHP and "model" for jupyter
-- Bigrams and Trigrams have variable phrases for each language and no major commonality across the different languages.
-- Java and JavaScript had no unique identifiers in their top words to their specific language
-    
-### Modeling:
-- Baseline Model:
-    - Using language mode (PHP being the most common) to create baseline.
-    - Accuracy is 38% on unseen data.
-- Models created on cleaned, stemmed and lemmatized data:
-    - Support Vector Classification (SVC)
-    - K-Nearest Neighbor (KNN)
-    - Naive Bayes
-    - Decision Tree
-    - Random Forest
-    - Logistic Regression
-- Best Model:
-    - SVC (on lemmatized data)
-- Model testing:
-    - Train Dataset
-        - 100% accuracy
-    - Validate Dataset (unseen)
-        - 85% accuracy
-- Performance:
-    - Test Dataset (unseen)
-        - 82% accuracy
-
-
-## Replicate My Project
-### tools/libraries:
-    1. python
-    2. pandas
-    3. scipy
-    4. sci-kit learn
-    5. numpy
-    6. matplotlib.pyplot
-    7. seaborn
-    8. NLTK
-    9. BeautifulSoup
-* Steps to recreate
-    1. If you wish to recreate this project:
-
-    - Read the README.md
-    - Download the data2.json file
-    - Download the prepare.py, explore.py, model.py and project_final_notebook.ipynb files into your working directory, or clone this repository
-    - Ensure your json file is named appropriately (data2.json)
-    - Run the project_final_notebook.ipynb notebook
-
-
-------------
-
+    - Create and evaluate various classification models, varying the data preprocessing methods and associated hyperparameters.
 
 ## Data Dictionary
 
 #### Target
 Name | Description | Type
 :---: | :---: | :---:
-language | The repository's respective programming language | object
+language_reduced | The primary programming language of the repository - with all but the top 3 languages binned as "Other" | object
 #### Features
 Name | Description | Type
 :---: | :---: | :---:
 repo | The name of the specific repository | object
-readme_contents | The contents of readme file scraped from that repo | object
-cleaned | The readme contents with stopwords removed, text normalized and tokenized | object
+language | the primary programming language of the repo | object
+original | The contents of readme file scraped from that repo | object
+clean | The readme contents with stopwords removed, text normalized and tokenized | object
 stemmed | The cleaned data stemmed | object
 lemmatized | The cleaned data lemmatized | object
 
+## Conclusion
 
+Although we did not create a model that outperforms the baseline, there are some points worth consideration.
+Perhaps at the forefront there's the issue of our relatively small sample size. We obtained 109 repositories but lost 16 due to null values.
 
-## Recommendations/With More Time:
-1. We would add in varying repo languages to see if we could increase the model's drop off on validate set.
-2. Adding in more Java and JavaScript readme files specifically may help model performance since they are the lowest amount of repos we have.
+Additionally, after the cleansing, stemming, lemmatizing and the like were performed, many extraneous details that seem to be tethered to the parsing tree itself remained in place. Take for example the highest occurence of https among each of the target language groups. The reason for this is that the markdown of many readmes contains hyperlinks which redirect a user to a page containing more information on that particular subject. Code blocks and URL elements, as well as indications of hyperlink buttons also remained, and many would have been commonplace across the spectrum of READMEs.
+
+Under the assumption that the hyperlinks themselves create complications, more narrowed-down contents, through the implementation of regex and the use of additional words to control for these matters (like including URL elements post-acquisition to the stopword list) perhaps the machine learning would have greater success in its predictive abilities. Nevertheless, due to a time-crunch, the current iteration is considered insubstantial and could use some improvement.
+
+On that note:
+
+## With More Time
+
+We would obtain more repositories, and make adjustments to the acquisition script itself to eliminate as many page contents that are not directly relevant to the repository itself; i. This would narrow down the failings and enrich the exploration stage just the same. Whatever extraneous or superfluous data remains after the aquisition could be further handled via the preparation stage.
+
+## Replicate My Project
+### tools/libraries:
+    - python
+    - pandas
+    - numpy
+    - sci-kit learn
+    - matplotlib
+    - seaborn
+    - NLTK
+    - BeautifulSoup
+* Steps to recreate
+    - to recreate using the same dataset found in this analysis, download data1.json
+    - to recreate using the current trending repositories or other repository collections, utilize acquire.py
+    - clone this repository, including .py modules, and run the `final_notebook.ipynb`
